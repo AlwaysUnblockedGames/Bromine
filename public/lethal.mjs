@@ -1,31 +1,31 @@
 //////////////////////////////
 ///          Init          ///
 //////////////////////////////
-      await import("/scram/scramjet.shared.js")
-    await import("/scram/scramjet.controller.js")
+await import("/scram/scramjet.shared.js")
+await import("/scram/scramjet.controller.js")
 
-    const scramjet = new ScramjetController({
-      files: {
-        wasm: "/scram/scramjet.wasm.wasm",
-        worker: "/scram/scramjet.worker.js",
-        client: "/scram/scramjet.client.js",
-        shared: "/scram/scramjet.shared.js",
-        sync: "/scram/scramjet.sync.js",
-      },
-      flags: {
-        serviceworkers: false,
-        syncxhr: false,
-        naiiveRewriter: false,
-        strictRewrites: true,
-        rewriterLogs: false,
-        captureErrors: true,
-        cleanErrors: true,
-        scramitize: false,
-        sourcemaps: true,
-      },
-    })
+const scramjet = new ScramjetController({
+  files: {
+    wasm: "/scram/scramjet.wasm.wasm",
+    worker: "/scram/scramjet.worker.js",
+    client: "/scram/scramjet.client.js",
+    shared: "/scram/scramjet.shared.js",
+    sync: "/scram/scramjet.sync.js",
+  },
+  flags: {
+    serviceworkers: false,
+    syncxhr: false,
+    naiiveRewriter: false,
+    strictRewrites: true,
+    rewriterLogs: false,
+    captureErrors: true,
+    cleanErrors: true,
+    scramitize: false,
+    sourcemaps: true,
+  },
+})
 
-import * as BareMux from "https://cdn.jsdelivr.net/gh/Coding4Hours/cdn/bare-mux/index.mjs"
+import * as BareMux from "https://unpkg.com/@mercuryworkshop/bare-mux@2.1.7/dist/index.mjs"
 
 //////////////////////////////
 ///         Options        ///
@@ -38,9 +38,9 @@ let proxyOption = null
 
 const transportOptions = {
   epoxy:
-    "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport/dist/index.mjs",
+    "https://unpkg.com/@mercuryworkshop/epoxy-transport@2.1.27/dist/index.mjs",
   libcurl:
-    "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport/dist/index.mjs",
+    "https://unpkg.com/@mercuryworkshop/libcurl-transport@1.5.0/dist/index.mjs",
 }
 
 //////////////////////////////
@@ -50,7 +50,6 @@ const stockSW = "./ultraworker.js"
 const swAllowedHostnames = ["localhost", "127.0.0.1"]
 
 async function registerSW() {
-
   if (!navigator.serviceWorker) {
     if (
       location.protocol !== "https:" &&
@@ -121,12 +120,12 @@ export function getWisp() {
 export async function setProxy(proxy) {
   console.log(`lethal.js: Setting proxy backend to ${proxy}`)
   if (proxy === "uv") {
-    await import("https://cdn.jsdelivr.net/gh/Coding4Hours/cdn/uv/uv.bundle.js")
+    await import(
+      "https://unpkg.com/@titaniumnetwork-dev/ultraviolet@3.2.10/dist/uv.bundle.js"
+    )
 
     await import("./uv.config.js")
   } else {
-
-
     scramjet.init()
     import("/scram/scramjet.worker.js")
   }

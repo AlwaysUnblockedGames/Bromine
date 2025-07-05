@@ -1,8 +1,9 @@
 ---
 import "@/styles.css"
 import Footer from "@/components/ui/Footer.astro"
-
+import OmniTabbar from "@/components/ui/OmniTabbar.astro"
 import Lethal from "@/utils/Lethal.astro"
+
 export interface Props {
   title: string
   desc: string
@@ -72,6 +73,8 @@ const { title = "bromine", desc = "a really shitty web proxy" } = Astro.props
     >
       Skip to main content
     </a>
+
+    <OmniTabbar/>
 
     <main id="main" class="flex flex-col flex-grow h-screen">
       <slot />

@@ -1,0 +1,301 @@
+---
+import Bookmarks from "@/components/Bookmarks.astro"
+import History from "@/components/History.astro"
+import Settings from "@/components/Settings.astro"
+import Suggestions from "@/utils/Suggestions.astro"
+import { Icon } from "astro-icon/components"
+---
+
+<div
+  id="omni-tabbar"
+  class="hidden flex max-h-screen h-full bg-base/50 p-2  flex-col space-y-2 z-[25]"
+>
+  <div class="flex items-center justify-between">
+    <h1 class="text-lg font-bold">bromine</h1>
+    <section>
+      <button
+        aria-label="Back"
+        id="omnibar-back-btn"
+        title="Back"
+        class="p-2 text-text hover:bg-overlay rounded-md"
+      >
+        <Icon name="ph:arrow-left-bold" class="size-4.5" />
+      </button>
+
+      <button
+        aria-label="Forward"
+        id="omnibar-forward-btn"
+        title="Forward"
+        class="p-2 text-text hover:bg-overlay rounded-md"
+      >
+        <Icon name="ph:arrow-right-bold" class="size-4.5" />
+      </button>
+
+      <button
+        aria-label="Reload"
+        id="omnibar-reload-btn"
+        title="Reload"
+        class="p-2 text-text hover:bg-overlay rounded-md"
+      >
+        <Icon name="ph:arrow-clockwise-bold" class="size-4.5" />
+      </button>
+    </section>
+  </div>
+
+  <div class="relative flex-1">
+    <div
+      class="shadow-md dark:bg-surface flex items-center rounded-md px-3 py-1.5"
+    >
+      <Icon name="ph:magnifying-glass-bold" class="size-4.5 mr-2" />
+      <form id="form" class="flex-center w-full">
+        <input
+          spellcheck="false"
+          autocomplete="off"
+          id="address"
+          type="text"
+          placeholder="Search the web freely"
+          class="bg-transparent w-full focus:outline-none"
+        />
+      </form>
+    </div>
+    <Suggestions />
+    <section class=" flex items-center justify-start pr-2">
+
+    <button
+      id="new-tab-btn"
+      class="p-2 text-text hover:bg-overlay rounded-md"
+      aria-label="New Tab"
+      title="New Tab"
+    >
+        <Icon name="ph:plus-bold" class="size-5" /> New Tab
+      </button>
+    </section>
+  </div>
+
+  <div id="tabs" class="flex-1 flex flex-col overflow-y-auto scrollbar-hide " />
+
+  <div class="flex items-center justify-center space-x-2">
+
+
+    <Bookmarks />
+
+    <History />
+
+    <button
+      aria-label="Dev Tools"
+      id="omnibar-dev-btn"
+      class="shadow-md bg-surface p-1.5 rounded-md hover:bg-highlight-med"
+    >
+      <Icon name="ph:code-bold" class="size-4.5" />
+    </button>
+
+    <Settings />
+  </div>
+</div>
+
+<script is:inline defer>
+  // Omnibar script
+  // let devtoolsVisible = false
+
+  const backButton = document.getElementById("omnibar-back-btn")
+  const forwardButton = document.getElementById("omnibar-forward-btn")
+  const reloadButton = document.getElementById("omnibar-reload-btn")
+  const devButton = document.getElementById("omnibar-dev-btn")
+
+  backButton.addEventListener("click", () => {
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.history.back()
+  })
+
+  forwardButton.addEventListener("click", () => {
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.history.forward()
+  })
+
+  reloadButton.addEventListener("click", () => {
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.location.reload()
+  })
+
+  devButton.addEventListener("click", () => {
+    const iframe = currentFrame?.contentWindow?.document
+    if (!iframe) return
+
+    if (iframe.eruda) {
+      devtoolsVisible ? iframe.eruda.hide() : iframe.eruda.show()
+      devtoolsVisible = !devtoolsVisible
+    } else {
+      const script = iframe.createElement("script")
+      script.src = "https://unpkg.com/eruda@3.4.3/eruda.js"
+      script.onload = () => {
+        iframe.eruda.init({ tool: ["console", "elements", "sources"] })
+        iframe.eruda.show()
+        devtoolsVisible = true
+      }
+      iframe.head.appendChild(script)
+    }
+  })
+
+  // Tabs script
+  let tabs = []
+  const tabsDiv = document.getElementById("tabs")
+
+  function createTab(id, title = "New Tab", url = "") {
+    const tab = document.createElement("div")
+    tab.className =
+      "flex items-center min-w-0 max-w-full px-4 py-2 border-b border-overlay hover:bg-overlay cursor-pointer"
+    tab.dataset.tabId = id
+
+    const favicon = document.createElement("img")
+    favicon.className = "mr-2 size-4"
+    favicon.alt = "Favicon"
+    favicon.src = getIcon(url)
+
+    const titleSpan = document.createElement("span")
+    titleSpan.className = "tab truncate flex-1"
+    titleSpan.textContent = title
+
+    const close = document.createElement("button")
+    close.className = "ml-2 text-text/50 hover:text-text"
+    close.innerHTML = "&times;"
+    close.onclick = async (e) => {
+      e.stopPropagation()
+      if (window.closeTab) {
+        window.closeTab(id)
+      }
+    }
+
+    tab.appendChild(favicon)
+    tab.appendChild(titleSpan)
+    tab.appendChild(close)
+
+    tab.onclick = () => {
+      if (window.switchTab) {
+        window.switchTab(id)
+      }
+    }
+
+    tabsDiv.appendChild(tab)
+    const tabData = { id, element: tab, title, url }
+    tabs.push(tabData)
+
+    return tabData
+  }
+
+  function getIcon(url) {
+    return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=${url}`
+  }
+
+  function checkState() {
+    const frames = Array.from(document.querySelectorAll('iframe[id^="frame-"]'))
+    const frameIds = frames.map((frame) =>
+      parseInt(frame.id.replace("frame-", "")),
+    )
+
+    tabs = tabs.filter((tab) => {
+      if (!frameIds.includes(tab.id)) {
+        tab.element.remove()
+        return false
+      }
+      return true
+    })
+
+    frameIds.forEach((id) => {
+      if (!tabs.some((tab) => tab.id === id)) {
+        createTab(id, "New Tab", "")
+      }
+    })
+
+    const visibleFrame = frames.find(
+      (frame) => !frame.classList.contains("hidden"),
+    )
+    if (visibleFrame) {
+      const activeTabId = parseInt(visibleFrame.id.replace("frame-", ""))
+      syncUI(activeTabId)
+    }
+  }
+
+  function syncUI(activeId) {
+    document.querySelectorAll("[data-tab-id]").forEach((tab) => {
+      const isActive = parseInt(tab.dataset.tabId) === activeId
+      tab.classList.toggle("bg-overlay", isActive)
+      tab.classList.toggle("active", isActive)
+    })
+  }
+
+  function renameTab(tabId, title, url) {
+    const tabData = tabs.find((t) => t.id === tabId)
+    if (!tabData) return
+
+    tabData.title = title || "New Tab"
+    tabData.url = url || ""
+
+    tabData.element.querySelector(".tab").textContent = tabData.title
+
+    tabData.element.querySelector("img").src = getIcon(tabData.url)
+  }
+
+  // --- EVENTS ----
+  document.getElementById("new-tab-btn")?.addEventListener("click", () => {
+    if (window.newTab) window.newTab()
+  })
+
+  document.addEventListener("new-tab", (e) => {
+    const tabId = e.detail.tabNumber
+    if (!tabs.some((tab) => tab.id === tabId)) {
+      createTab(tabId, "New Tab", "")
+    }
+    checkState()
+  })
+
+  document.addEventListener("switch-tab", (e) => {
+    const tabId = e.detail.tabNumber
+    syncUI(tabId)
+  })
+
+  document.addEventListener("url-changed", (e) => {
+    renameTab(e.detail.tabId, e.detail.title, e.detail.url)
+  })
+
+  document.addEventListener("close-tab", (e) => {
+    const tabId = e.detail.tabNumber
+    const tabIndex = tabs.findIndex((tab) => tab.id === tabId)
+    if (tabIndex !== -1) {
+      tabs[tabIndex].element.remove()
+      tabs.splice(tabIndex, 1)
+    }
+    checkState()
+  })
+
+  checkState()
+</script>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  [data-tab-id] {
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  [data-tab-id]:hover,
+  [data-tab-id].active {
+    background-color: var(--color-overlay);
+  }
+
+  [data-tab-id].active {
+    border-left-color: var(--color-iris);
+  }
+
+  .sortable-ghost {
+    opacity: 0.5;
+    background: var(--color-highlight-med);
+  }
+</style>

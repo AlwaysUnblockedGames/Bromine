@@ -69,45 +69,44 @@ import { Icon } from "astro-icon/components"
 </nav>
 
 <script is:inline defer>
-  let devtoolsVisible = false;
+  let devtoolsVisible = false
 
-  const backButton = document.getElementById("omnibar-back-btn");
-  const forwardButton = document.getElementById("omnibar-forward-btn");
-  const reloadButton = document.getElementById("omnibar-reload-btn");
-  const devButton = document.getElementById("omnibar-dev-btn");
+  const backButton = document.getElementById("omnibar-back-btn")
+  const forwardButton = document.getElementById("omnibar-forward-btn")
+  const reloadButton = document.getElementById("omnibar-reload-btn")
+  const devButton = document.getElementById("omnibar-dev-btn")
 
   backButton.addEventListener("click", () => {
-    const iframe = document.getElementById("frame");
-    if (iframe && iframe.contentWindow) iframe.contentWindow.history.back();
-  });
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.history.back()
+  })
 
   forwardButton.addEventListener("click", () => {
-    const iframe = document.getElementById("frame");
-    if (iframe && iframe.contentWindow) iframe.contentWindow.history.forward();
-  });
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.history.forward()
+  })
 
   reloadButton.addEventListener("click", () => {
-    const iframe = document.getElementById("frame");
-    if (iframe && iframe.contentWindow) iframe.contentWindow.location.reload();
-  });
+    const iframe = document.getElementById("frame")
+    if (iframe && iframe.contentWindow) iframe.contentWindow.location.reload()
+  })
 
   devButton.addEventListener("click", () => {
-    const iframe = currentFrame?.contentWindow?.document;
-    if (!iframe) return;
+    const iframe = currentFrame?.contentWindow?.document
+    if (!iframe) return
 
     if (iframe.eruda) {
-      devtoolsVisible ? iframe.eruda.hide() : iframe.eruda.show();
-      devtoolsVisible = !devtoolsVisible;
+      devtoolsVisible ? iframe.eruda.hide() : iframe.eruda.show()
+      devtoolsVisible = !devtoolsVisible
     } else {
-      const script = iframe.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/eruda";
+      const script = iframe.createelement("script")
+      script.src = "https://unpkg.com/eruda@3.4.3/eruda.js"
       script.onload = () => {
-        iframe.eruda.init({ tool: ["console", "elements", "sources"] });
-        iframe.eruda.show();
-        devtoolsVisible = true;
-      };
-      iframe.head.appendChild(script);
+        iframe.eruda.init({ tool: ["console", "elements", "sources"] })
+        iframe.eruda.show()
+        devtoolsVisible = true
+      }
+      iframe.head.appendchild(script)
     }
-  });
-
+  })
 </script>

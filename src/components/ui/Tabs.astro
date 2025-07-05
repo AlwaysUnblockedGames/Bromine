@@ -61,9 +61,6 @@ import { Icon } from "astro-icon/components"
   }
 
   function getIcon(url) {
-    if (!url)
-      return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><text x="0" y="14" font-size="16">🌐</text></svg>'
-
     return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=${url}`
   }
 
@@ -139,9 +136,6 @@ import { Icon } from "astro-icon/components"
     renameTab(e.detail.tabId, e.detail.title, e.detail.url)
   })
     
-    document.getElementById('new-tab-btn')?.addEventListener('click', () => {
-      if (window.newTab) window.newTab();
-    });
     
 
     document.addEventListener('switch-tab', (e) => {
