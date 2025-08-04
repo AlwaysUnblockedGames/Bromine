@@ -1,95 +1,113 @@
 ---
 import Bookmarks from "@/components/Bookmarks.astro";
 import History from "@/components/History.astro";
-import Settings from "@/components/Settings.astro";
-import Suggestions from "@/components/utils/Suggestions.astro";
+import Suggestions from "@/utils/Suggestions.astro";
 import { Icon } from "astro-icon/components";
 ---
 
-<header class="sticky top-0 bg-base/50 p-2 flex items-center justify-between space-x-2 z-[25]">
-  <h1 class="text-text font-semibold">bromine</h1>
+<nav class="sticky top-2 bg-black/90 backdrop-blur-md border-b border-gold/30 p-2 flex items-center justify-between space-x-2 z-[25]">
+  <h1 class="text-gold font-semibold text-xl ml-2">Hyperion Proxy</h1>
 
   <div class="flex items-center flex-1 space-x-2 max-w-4xl mx-auto">
     <button
+      aria-label="Settings"
+      id="omnibar-settings-btn"
+      class="shadow-md bg-[#0b1528] border border-gold/20 p-1.5 rounded-full hover:bg-gold/10 hover:border-gold/40 transition-colors text-gold"
+    >
+      <Icon name="ph:gear-bold" class="size-4.5" />
+    </button>
+    <button
       aria-label="Back"
       id="back-btn"
-      class="shadow-md bg-surface p-1.5 rounded-md hover:bg-highlight-med"
+      class="shadow-md bg-[#0b1528] border border-gold/20 p-1.5 rounded-full hover:bg-gold/10 hover:border-gold/40 transition-colors text-gold"
     >
       <Icon name="ph:arrow-left-bold" class="size-4.5" />
     </button>
     <button
       aria-label="Forward"
       id="forward-btn"
-      class="shadow-md bg-surface p-1.5 rounded-md hover:bg-highlight-med"
+      class="shadow-md bg-[#0b1528] border border-gold/20 p-1.5 rounded-full hover:bg-gold/10 hover:border-gold/40 transition-colors text-gold"
     >
       <Icon name="ph:arrow-right-bold" class="size-4.5" />
     </button>
     <button
       aria-label="Reload"
       id="reload-btn"
-      class="shadow-md bg-surface p-1.5 rounded-md hover:bg-highlight-med"
+      class="shadow-md bg-[#0b1528] border border-gold/20 p-1.5 rounded-full hover:bg-gold/10 hover:border-gold/40 transition-colors text-gold"
     >
       <Icon name="ph:arrow-clockwise-bold" class="size-4.5" />
     </button>
 
     <div class="flex-1 min-w-0">
-      <div class="relative shadow-md dark:bg-surface flex items-center rounded-md px-3 py-1.5">
-        <Icon name="ph:magnifying-glass-bold" class="size-4.5 mr-2" />
+      <div class="relative shadow-md bg-[#0b1528] border border-gold/20 flex items-center rounded-full px-4 py-2">
+        <Icon name="ph:magnifying-glass-bold" class="size-4.5 mr-2 text-gold" />
         <form id="form" class="flex w-full">
           <input
             spellcheck="false"
             autocomplete="off"
             id="address"
             type="text"
-            placeholder="Search the web freely"
-            class="bg-transparent w-full focus:outline-none text-sm"
+            placeholder="Search or enter a URL"
+            class="bg-transparent w-full focus:outline-none text-sm text-text"
           />
         </form>
         <Suggestions />
       </div>
     </div>
 
-    <Bookmarks />
-    <History />
-    <Settings />
+    <div class="hidden md:block">
+      <Bookmarks />
+    </div>
+    <div class="hidden md:block">
+      <History />
+    </div>
+
+    <div class="flex items-center">
+      <div id="clock" class="text-gold font-medium mr-3 hidden md:block">15:20:56</div>
+    </div>
   </div>
 
   <div class="relative flex-shrink-0">
     <button
       aria-label="Context Menu"
       id="three-dots-btn"
-      class="shadow-md bg-surface p-1.5 rounded-md hover:bg-highlight-med"
+      class="shadow-md bg-[#0b1528] border border-gold/20 p-1.5 rounded-full hover:bg-gold/10 hover:border-gold/40 transition-colors text-gold"
     >
       <Icon name="ph:dots-three-outline-vertical-bold" class="size-4.5" />
     </button>
     <div
       id="context-menu"
-      class="origin-top-right absolute right-0 mt-2 w-48 bg-surface shadow-lg rounded-md border border-overlay hidden z-50"
+      class="origin-top-right absolute right-0 mt-2 w-48 bg-[#0b1528] shadow-lg rounded-md border border-gold/30 hidden z-50"
     >
       <button
         id="dev-btn"
-        class="flex items-center w-full px-4 py-2 text-left text-sm hover:bg-highlight-med"
+        class="flex items-center w-full px-4 py-2 text-left text-sm hover:bg-gold/10 text-text"
       >
-        <Icon name="ph:code-bold" class="size-4.5 mr-2" />
+        <Icon name="ph:code-bold" class="size-4.5 mr-2 text-gold" />
         Dev Tools
       </button>
       <button
         id="full-btn"
-        class="flex items-center w-full px-4 py-2 text-left text-sm hover:bg-highlight-med"
+        class="flex items-center w-full px-4 py-2 text-left text-sm hover:bg-gold/10 text-text"
       >
-        <Icon name="ph:arrows-out-bold" class="size-4.5 mr-2" />
+        <Icon name="ph:arrows-out-bold" class="size-4.5 mr-2 text-gold" />
         Fullscreen
       </button>
     </div>
   </div>
-</header>
-
+</nav>
 
 <script>
   import { currentFrame } from "@/utils/lethal.ts"
   let devtoolsVisible = false
 
   const actions = [
+{
+      id: "omnibar-settings-btn",
+      handler: () => {
+        document.dispatchEvent(new CustomEvent("toggle-settings"))
+      }
+    },
     {
       id: "back-btn",
       handler: () => {
@@ -165,4 +183,19 @@ import { Icon } from "astro-icon/components";
       contextMenu?.classList.add("hidden")
     }
   })
+
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    const clockElement = document.getElementById('clock');
+    if (clockElement) {
+      clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
 </script>

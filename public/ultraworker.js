@@ -8,6 +8,7 @@ importScripts("/alu-adblocker.js")
 importScripts("/scram/scramjet.all.js");
 
 
+
 if (navigator.userAgent.includes("Firefox")) {
   Object.defineProperty(globalThis, "crossOriginIsolated", {
     value: true,
@@ -40,13 +41,9 @@ ww.use({
 });
 
 
-
-
-
 self.addEventListener("install", () => {
   self.skipWaiting()
 })
-
 
 async function handleRequest(event) {
   let mwResponse = await ww.run(event)();

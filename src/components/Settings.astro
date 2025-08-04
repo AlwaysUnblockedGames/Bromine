@@ -20,8 +20,8 @@ const flatSettingsConfig = settingsData.sections.flatMap(
   <div class="space-y-6">
     {
       settingsData.sections.map((section) => (
-        <section class="space-y-4 border-t border-overlay pt-4 first:pt-0 first:border-t-0">
-          <h2 class="text-lg font-medium text-text">{section.title}</h2>
+        <section class="space-y-4 border-t border-gold/20 pt-4 first:pt-0 first:border-t-0">
+          <h2 class="text-lg font-medium text-gold">{section.title}</h2>
           {section.settings.map((setting) => (
             <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-2">
@@ -30,7 +30,7 @@ const flatSettingsConfig = settingsData.sections.flatMap(
                 </label>
                 {setting.description && (
                   <button
-                    class="info-btn text-text/60 hover:text-iris transition-colors"
+                    class="info-btn text-gold/60 hover:text-gold transition-colors"
                     aria-label={`More info about ${setting.label}`}
                     data-description={setting.description}
                   >
@@ -42,7 +42,7 @@ const flatSettingsConfig = settingsData.sections.flatMap(
                 {setting.type === "select" && (
                   <select
                     id={setting.id}
-                    class="bg-base text-text rounded-md p-1 border border-overlay focus:border-iris focus:outline-none"
+                    class="bg-[#0b1528] text-text rounded-md p-1 border border-gold/30 focus:border-gold/60 focus:outline-none"
                   >
                     {setting.options?.map((option) => (
                       <option disabled={option.disabled} value={option.value}>
@@ -56,7 +56,7 @@ const flatSettingsConfig = settingsData.sections.flatMap(
                     <input
                       type="text"
                       id={setting.id}
-                      class="bg-base text-text rounded-md border p-1 border-overlay focus:border-iris focus:outline-none w-full sm:w-48"
+                      class="bg-[#0b1528] text-text rounded-md border p-1 border-gold/30 focus:border-gold/60 focus:outline-none w-full sm:w-48"
                       placeholder={setting.placeholder || ""}
                       aria-invalid="false"
                       aria-describedby={`${setting.id}-error`}
@@ -71,7 +71,7 @@ const flatSettingsConfig = settingsData.sections.flatMap(
                       id={setting.id}
                       class="sr-only peer"
                     />
-                    <div class="w-11 h-6 bg-overlay rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-iris peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-iris" />
+                    <div class="w-11 h-6 bg-[#0b1528] rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gold peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold/70" />
                   </label>
                 )}
               </div>
@@ -80,8 +80,8 @@ const flatSettingsConfig = settingsData.sections.flatMap(
         </section>
       ))
     }
-    <div class="border-t border-overlay pt-4">
-      <p class="text-xs text-text">
+    <div class="border-t border-gold/20 pt-4">
+      <p class="text-xs text-gold">
         Ping: <span id="ping-result" class="font-mono">Pinging...</span>
       </p>
     </div>
@@ -89,7 +89,7 @@ const flatSettingsConfig = settingsData.sections.flatMap(
 
   <div
     id="info-tooltip"
-    class="bg-overlay absolute z-10 hidden max-w-xs p-2 text-sm rounded-md shadow-lg bg-crust text-text border border-overlay pointer-events-none"
+    class="bg-[#0b1528] absolute z-10 hidden max-w-xs p-2 text-sm rounded-md shadow-lg text-text border border-gold/30 pointer-events-none"
   >
   </div>
 </Popup>
@@ -113,8 +113,8 @@ const checkRegex = (element, setting) => {
 
   errorElement.classList.toggle("hidden", isValid);
   errorElement.textContent = isValid ? "" : (setting.validationMessage ?? "Invalid input.");
-  element.classList.toggle("border-rose", !isValid); 
-  element.setAttribute("aria-invalid", (!isValid).toString()); 
+  element.classList.toggle("border-rose", !isValid);
+  element.setAttribute("aria-invalid", (!isValid).toString());
 
   return isValid;
 };
@@ -198,7 +198,7 @@ const hideTooltip = () => {
 const ping = async () => {
   const url = location.origin;
   const pingResultEl = document.getElementById("ping-result");
-  if (!pingResultEl) return; 
+  if (!pingResultEl) return;
 
   pingResultEl.textContent = "Pinging...";
   const startTime = performance.now();
@@ -209,7 +209,7 @@ const ping = async () => {
     const duration = Math.round(endTime - startTime);
     pingResultEl.textContent = `${duration}ms`;
   } catch (e) {
-    pingResultEl.textContent = "Error"; 
+    pingResultEl.textContent = "Error";
     console.error("Ping failed:", e);
   }
 };
@@ -230,7 +230,7 @@ document.querySelectorAll(".info-btn").forEach((button) => {
   button.addEventListener("mouseenter", () => showTooltip(button));
   button.addEventListener("mouseleave", hideTooltip);
   button.addEventListener("focus", () => showTooltip(button));
-  button.addEventListener("blur", hideTooltip);   
+  button.addEventListener("blur", hideTooltip);
 });
 
 popupContent.addEventListener("scroll", hideTooltip, { passive: true });

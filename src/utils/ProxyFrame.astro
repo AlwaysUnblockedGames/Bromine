@@ -1,0 +1,17 @@
+---
+---
+
+<section id="frames" class="flex-1 relative"></section>
+
+<script>
+  import { setFrames } from "@/utils/lethal";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const framesContainer = document.getElementById("frames");
+    if (framesContainer) {
+      setTimeout(() => {
+        setFrames(framesContainer);
+      }, 0);
+    }
+  });
+</script>

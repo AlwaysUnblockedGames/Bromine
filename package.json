@@ -1,14 +1,17 @@
 {
-  "name": "bromine",
+  "name": "hyperion-proxy",
   "version": "1.0.0",
-  "description": "bromine",
+  "description": "hyperion proxy",
   "scripts": {
-    "dev": "astro dev",
-    "check": "bunx biome check --write * && astro check",
-    "build": "astro build --experimental-static-build",
-    "deploy": "wrangler deploy"
+    "dev": "bunx astro dev --host 0.0.0.0",
+    "check": "bunx biome check --write * && bunx astro check",
+    "build": "bunx astro build",
+    "preview": "bunx astro preview",
+    "start": "node dist/server/entry.mjs",
+    "deploy": "bunx wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/node": "^9.3.0",
     "@astrojs/partytown": "^2.1.4",
     "@astrojs/ts-plugin": "^1.10.4",
     "@iconify-json/ph": "^1.2.2",
@@ -17,7 +20,7 @@
     "@playform/compress": "^0.1.9",
     "@shopify/draggable": "^1.1.4",
     "@tailwindcss/vite": "^4.1.11",
-    "astro": "5.12.8",
+    "astro": "^5.12.0",
     "astro-icon": "^1.1.5",
     "tailwindcss": "^4.1.11"
   },
@@ -31,5 +34,8 @@
     "unix-dgram",
     "utf-8-validate",
     "workerd"
-  ]
+  ],
+  "engines": {
+    "node": ">=20.x"
+  }
 }

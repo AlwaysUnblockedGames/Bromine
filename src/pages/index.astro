@@ -1,16 +1,23 @@
 ---
-import Layout from "@/Layout.astro";
+import Layout from "@/Layout.astro"
 
-import Tabs from "@/components/ui/Tabs.astro";
-import Omnibar from "@/components/ui/Omnibar.astro";
-import ProxyFrame from "@/components/utils/ProxyFrame.astro";
+import Tabs from "@/components/ui/Tabs.astro"
+import Omnibar from "@/components/ui/Omnibar.astro"
+import ProxyFrame from "@/utils/ProxyFrame.astro"
+import Settings from "@/components/Settings.astro"
 ---
 
 <Layout>
-  <Tabs />
-  <Omnibar />
-  <ProxyFrame/>
+  <div class="flex flex-col h-full">
+    <Tabs />
+    <Omnibar />
+    <div class="flex-1 relative">
+      <ProxyFrame/>
+    </div>
+    <Settings />
+  </div>
 </Layout>
+
 <script>
 if (localStorage.getItem("ab") === "true") {
   try {
@@ -24,4 +31,8 @@ if (localStorage.getItem("ab") === "true") {
     alert("Try allowing popup permissions for about:blank to work.");
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+  // The tabs should be initialized automatically by the lethal.ts and ProxyFrame.astro scripts
+  console.log("Index page loaded - tab system should be initialized");
+});
 </script>

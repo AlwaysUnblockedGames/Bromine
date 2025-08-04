@@ -1,25 +1,41 @@
 // @ts-check
-import { defineConfig } from "astro/config"
-import tailwindcss from "@tailwindcss/vite"
-import icon from "astro-icon"
+import { defineConfig } from 'astro/config';
+import partytown from '@astrojs/partytown';
+import tailwindcss from "@tailwindcss/vite";
+import icon from "astro-icon";
+import node from '@astrojs/node';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-import partytown from "@astrojs/partytown";
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  integrations: [icon(), (await import("@playform/compress")).default(), partytown()],
-
+  site: 'https://hyperion-proxy.netlify.app',
+  integrations: [icon(), partytown()],
+  output: 'static',
   vite: {
-    build: {
-      sourcemap: true,
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, 'src'),
+      },
     },
-    css: {
-      devSourcemap: true, 
+    build: {
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          entryFileNames: '[name].[hash].js', 
+          chunkFileNames: '[name].[hash].js',
+          assetFileNames: '[name].[hash][extname]', 
+        },
+      },
+    },
+    ssr: {
+      noExternal: ['astro-icon'],
     },
     plugins: [tailwindcss()],
   },
+});
 
-  experimental: {
-    preserveScriptOrder: true,
-  },
-})
+if (process.env.DEBUG) {
+  console.log("Telemetry Debugging Enabled");
+}

@@ -10,18 +10,16 @@
     setProxy,
     makeURL,
     getProxied,
-    setFrames,
     addressInput,
     currentTab,
     Tab
-  } from "@/utils/lethal"
+  } from "./lethal"
 
   // --- INIT ---
   const form = document.getElementById("form")
   let search =
     localStorage.getItem("search-engine") ||
     "https://search.brave.com/search?q=%s"
-
 
   let backend = localStorage.getItem("proxy-backend") || "uv"
   let wisp = localStorage.getItem("wisp-server") || "wss://anura.pro/"
@@ -48,8 +46,7 @@
     } else {
       currentFrame.src = proxiedUrl
     }
-    if(currentFrame === document.getElementById(`frame-${currentTab}`))
-      addressInput.value = urlToLoad
+    addressInput.value = urlToLoad
   })
 
   window.addEventListener("search-engine-changed", () => {
@@ -71,6 +68,4 @@
     setTransport(localStorage.getItem("proxy-transport") as Transport)
   })
 
-  setFrames(document.getElementById("frames") as HTMLElement);
-  new Tab();
 </script>

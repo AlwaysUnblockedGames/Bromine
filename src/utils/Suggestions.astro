@@ -15,19 +15,27 @@
   const suggestionsList = document.getElementById("suggestions-list");
   const form = document.getElementById("form");
 
+  const SEARCH_API_URL = "https://corsproxy.io/?url=https://duckduckgo.com/ac/?q=";
   let currentHighlightedIndex = -1;
-  const worker = new Worker('/workers/fetchSuggestions.ts', { type: 'module' });
 
-  const fetchSuggestions = (query) => {
-    return new Promise((resolve) => {
-      const handleMessage = (event) => {
-        worker.removeEventListener("message", handleMessage);
-        resolve(event.data);
-      };
+  const STATIC_SUGGESTIONS = [
+    'Google', 'YouTube', 'Facebook', 'Twitter', 'Reddit', 'Wikipedia', 'Amazon', 'Netflix', 'Gmail',
+    'Instagram', 'Twitch', 'TikTok', 'Discord', 'Roblox', 'Microsoft', 'GitHub', 'Spotify', 'Yahoo', 'Zoom',
+    'Bing', 'Pinterest', 'Stack Overflow', 'eBay', 'LinkedIn', 'Wordle', 'CNN',
+  ];
 
-      worker.addEventListener("message", handleMessage);
-      worker.postMessage(query);
-    });
+  const fetchSuggestions = async (query) => {
+    if (!query) return [];
+    try {
+      const response = await fetch(`${SEARCH_API_URL}${encodeURIComponent(query)}`);
+      const data = await response.json();
+      let phrases = data.map(item => item.phrase);
+      const matches = STATIC_SUGGESTIONS.filter(s => s.toLowerCase().includes(query.toLowerCase()));
+      if (matches.length) phrases = [...matches, ...phrases];
+      return [...new Set(phrases)].slice(0, 8);
+    } catch (error) {
+      return STATIC_SUGGESTIONS.filter(s => s.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+    }
   };
 
   const renderSuggestions = (suggestions) => {
@@ -42,7 +50,7 @@
     suggestionsList.innerHTML = suggestions
       .map(
         (item, index) => `
-      <li class="p-2 cursor-pointer hover:bg-highlight-low text-text" data-index="${index}">
+      <li class="p-2 cursor-pointer hover:bg-gold hover:text-black text-gold border-b border-overlay last:border-b-0" data-index="${index}">
         ${item}
       </li>
     `,
@@ -92,8 +100,8 @@
       return;
     }
 
-      const suggestions = await fetchSuggestions(query);
-      renderSuggestions(suggestions);
+    const suggestions = await fetchSuggestions(query);
+    renderSuggestions(suggestions);
   });
 
   addressInput.addEventListener("focus", async () => {
